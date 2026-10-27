@@ -1,0 +1,9 @@
+media: media
+
+content:
+  - name: homepage
+    label: Page d'accueil (HTML)
+    type: file
+    path: index.html
+    format: code
+    fields: []
