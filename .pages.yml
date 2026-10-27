@@ -7,3 +7,47 @@ content:
     path: index.html
     format: code
     fields: []
+    media: media
+
+content:
+  - name: homepage
+    label: Page d'accueil (HTML)
+    type: file
+    path: index.html
+    format: code
+    fields: []
+
+  - name: articles
+    label: Articles
+    type: collection
+    path: content/articles
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view:
+      fields: [title, date, category]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Titre
+        type: string
+        required: true
+      - name: date
+        label: Date de publication
+        type: date
+        required: true
+      - name: category
+        label: Catégorie
+        type: string
+      - name: image
+        label: Photo de couverture
+        type: image
+      - name: excerpt
+        label: Résumé
+        type: text
+      - name: body
+        label: Contenu de l'article
+        type: rich-text
