@@ -113,7 +113,8 @@
       }
 
       grid.replaceChildren();
-      articles.slice(0, 6).forEach((article, index) => {
+      const renderedCards = [];
+      articles.slice(0, 30).forEach((article, index) => {
         const card = document.createElement('article');
         card.className = 'news-card' + (index === 0 ? ' featured' : '');
 
@@ -171,7 +172,39 @@
 
         card.append(picture, body);
         grid.appendChild(card);
+        renderedCards.push({card, article});
       });
+
+      const filters = document.getElementById('category-filters');
+      const search = document.getElementById('article-search');
+      const categories = [...new Set(articles.map(article => article.category).filter(Boolean))];
+      let activeCategory = 'all';
+      if (filters) {
+        categories.forEach(category => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'filter-chip';
+          button.dataset.filter = category;
+          button.textContent = category;
+          filters.appendChild(button);
+        });
+        filters.addEventListener('click', event => {
+          const button = event.target.closest('button[data-filter]');
+          if (!button) return;
+          activeCategory = button.dataset.filter;
+          filters.querySelectorAll('.filter-chip').forEach(item => item.classList.toggle('active', item === button));
+          applyArticleFilters();
+        });
+      }
+      function applyArticleFilters() {
+        const term = (search?.value || '').trim().toLocaleLowerCase('fr');
+        renderedCards.forEach(({card, article}) => {
+          const matchesCategory = activeCategory === 'all' || article.category === activeCategory;
+          const searchable = [article.title, article.category, article.summary, article.body].join(' ').toLocaleLowerCase('fr');
+          card.hidden = !matchesCategory || (term && !searchable.includes(term));
+        });
+      }
+      if (search) search.addEventListener('input', applyArticleFilters);
 
       const note = document.querySelector('.demo-note');
       if (note) note.hidden = true;
@@ -185,5 +218,24 @@
     }
   }
 
+
+  async function loadUrgentAlert() {
+    try {
+      const response = await fetch('https://api.github.com/repos/zavierlevisionnaire/echo-du-nord-tv/contents/content/urgent.json?ref=main', {cache:'no-store', headers:{Accept:'application/vnd.github+json'}});
+      if (!response.ok) return;
+      const file = await response.json();
+      const config = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\\s/g, '')))));
+      if (!config.active || !config.message) return;
+      const banner = document.getElementById('urgent-banner');
+      const message = document.getElementById('urgent-message');
+      const link = document.getElementById('urgent-link');
+      if (!banner || !message) return;
+      message.textContent = config.message;
+      if (config.url) { link.href = config.url; link.hidden = false; }
+      banner.hidden = false;
+    } catch (error) { console.warn('Alerte urgente non chargée :', error); }
+  }
+
   loadCmsArticles();
+  loadUrgentAlert();
 })();
