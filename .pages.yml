@@ -49,3 +49,43 @@ content:
     path: content/urgent.json
     format: code
     fields: []
+
+  - name: advertisements
+    label: Publicités & partenaires
+    type: collection
+    path: content/ads
+    filename: "{primary}.md"
+    format: yaml-frontmatter
+    view:
+      fields: [title, position, active]
+      primary: title
+      sort: [title]
+    fields:
+      - name: title
+        label: Nom de l'annonceur
+        type: string
+        required: true
+      - name: active
+        label: Publicité activée
+        type: boolean
+        default: false
+      - name: position
+        label: Emplacement
+        type: select
+        options:
+          values:
+            - value: accueil
+              label: Bannière page d'accueil
+            - value: article
+              label: Entre les articles
+            - value: partenaire
+              label: Partenaire / publireportage
+      - name: image
+        label: Visuel publicitaire
+        type: image
+      - name: excerpt
+        label: Description courte
+        type: text
+      - name: url
+        label: Lien de destination
+        type: string
