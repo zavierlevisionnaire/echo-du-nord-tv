@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zavierlevisionnaire.github.io/echo-du-nord-tv/sitemap.xml
