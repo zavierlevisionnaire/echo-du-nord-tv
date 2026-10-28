@@ -70,7 +70,7 @@
         };
       }));
 
-      const validArticles = articles.filter(article => article && article.title.toLowerCase() !== 'test site' && article.title.toLowerCase() !== 'mvl' && article.summary.length >= 35).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const validArticles = articles.filter(article => article && article.title).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
       if (!validArticles.length) return;
       grid.replaceChildren();
 
