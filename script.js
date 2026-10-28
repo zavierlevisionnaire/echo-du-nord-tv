@@ -267,7 +267,7 @@
       const response = await fetch('https://api.github.com/repos/zavierlevisionnaire/echo-du-nord-tv/contents/content/urgent.json?ref=main', {cache:'no-store', headers:{Accept:'application/vnd.github+json'}});
       if (!response.ok) return;
       const file = await response.json();
-      const config = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\\s/g, '')))));
+      const config = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(file.content.replace(/\s/g, '')), character => character.charCodeAt(0))));
       if (!config.active || !config.message) return;
       const banner = document.getElementById('urgent-banner');
       const message = document.getElementById('urgent-message');
