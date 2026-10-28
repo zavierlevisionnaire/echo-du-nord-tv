@@ -138,8 +138,6 @@ document.querySelectorAll('[data-social]').forEach(link => {
 
   } catch (error) {
     console.error('Erreur de chargement des articles :', error);
-  }
-}
 
 loadCmsArticles();
   link.href = socialLinks[key] || '#';
