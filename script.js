@@ -82,7 +82,7 @@
 
         if (article.image) {
           const img = document.createElement('img');
-          img.src = article.image.replace(/^\\/+/, '');
+          img.src = article.image.replace(/^\/+/, '');
           img.alt = article.title;
           img.loading = 'lazy';
           img.style.width = '100%';
