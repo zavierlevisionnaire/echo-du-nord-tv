@@ -251,7 +251,7 @@
           card.appendChild(img);
         }
         const label = document.createElement('span');
-        label.textContent = 'PARTENAIRE • CONTENU COMMERCIAL';
+        label.textContent = ({accueil:'BANNIÈRE PARTENAIRE',article:'PUBLICITÉ • PUBLIREPORTAGE',partenaire:'PARTENAIRE ÉCHO DU NORD'})[ad.position] || 'PARTENAIRE • CONTENU COMMERCIAL';
         const title = document.createElement('strong');
         title.textContent = ad.title;
         const description = document.createElement('small');
