@@ -40,11 +40,11 @@
   });
 
   function parseFrontMatter(markdown) {
-    const match = markdown.match(/^---\\s*\\r?\\n([\\s\\S]*?)\\r?\\n---(?:\\r?\\n|$)/);
+    const match = markdown.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
     if (!match) return null;
     const fields = {};
-    match[1].split(/\\r?\\n/).forEach(line => {
-      const field = line.match(/^([\\wÀ-ÿ-]+):\\s*(.*)$/);
+    match[1].split(/\r?\n/).forEach(line => {
+      const field = line.match(/^([\wÀ-ÿ-]+):\s*(.*)$/);
       if (!field) return;
       let value = field[2].trim();
       if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
@@ -54,11 +54,11 @@
     });
     const body = markdown.slice(match[0].length).trim();
     const plainBody = body
-      .replace(/^#{1,6}\\s+/gm, '')
-      .replace(/!\\[([^\\]]*)\\]\\([^)]*\\)/g, '$1')
-      .replace(/\\[([^\\]]+)\\]\\([^)]*\\)/g, '$1')
+      .replace(/^#{1,6}\s+/gm, '')
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
       .replace(/[>*_~`]/g, '')
-      .replace(/\\s+/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim();
     return {
       title: fields.title || fields.titre || '',
@@ -122,7 +122,7 @@
 
         if (article.image) {
           const img = document.createElement('img');
-          const relativeImage = article.image.replace(/^\\/+/, '');
+          const relativeImage = article.image.replace(/^\/+/, '');
           img.src = new URL(relativeImage, document.baseURI).href;
           img.alt = article.title;
           img.loading = 'lazy';
