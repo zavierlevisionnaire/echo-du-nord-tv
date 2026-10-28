@@ -21,7 +21,7 @@
   if (year) year.textContent = new Date().getFullYear();
 
   // Renseigner ici les véritables adresses officielles du média.
-  const socialLinks = { facebook: '', youtube: '', whatsapp: 'https://wa.me/24174619127' };
+  const socialLinks = { facebook: 'https://www.facebook.com/share/1C2ddVXJ9V/', youtube: '', whatsapp: 'https://wa.me/24174619127' };
   document.querySelectorAll('[data-social]').forEach(link => {
     const url = socialLinks[link.dataset.social];
     if (url) {
