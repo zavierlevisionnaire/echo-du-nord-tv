@@ -65,6 +65,9 @@
       date: fields.date || '',
       category: fields.category || fields.categorie || fields['catégorie'] || 'Actualité',
       image: fields.image || '',
+      active: fields.active || 'false',
+      position: fields.position || 'accueil',
+      url: fields.url || '',
       summary: fields.excerpt || fields.extrait || fields.resume || plainBody.slice(0, 220) || 'Retrouvez cette actualité sur Écho du Nord TV.',
       body: plainBody
     };
@@ -219,6 +222,46 @@
   }
 
 
+  async function loadCmsAds() {
+    const container = document.getElementById('ad-slots');
+    if (!container) return;
+    try {
+      const response = await fetch('https://api.github.com/repos/zavierlevisionnaire/echo-du-nord-tv/contents/content/ads?ref=main', {cache:'no-store', headers:{Accept:'application/vnd.github+json'}});
+      if (!response.ok) throw new Error('GitHub API : ' + response.status);
+      const files = await response.json();
+      const ads = (await Promise.all(files.filter(file => file.type === 'file' && file.name.toLowerCase().endsWith('.md')).map(async file => {
+        try {
+          const result = await fetch(file.download_url, {cache:'no-store'});
+          if (!result.ok) return null;
+          return parseFrontMatter(await result.text());
+        } catch (error) { console.warn('Publicité non chargée :', file.name, error); return null; }
+      }))).filter(ad => ad && ad.title && ['true','yes','oui'].includes(String(ad.active).toLowerCase()));
+      if (!ads.length) return;
+      container.replaceChildren();
+      ads.forEach(ad => {
+        const card = document.createElement(ad.url ? 'a' : 'div');
+        card.className = 'ad-slot ad-live';
+        if (ad.url) { card.href = ad.url; card.target = '_blank'; card.rel = 'noopener noreferrer'; }
+        if (ad.image) {
+          const img = document.createElement('img');
+          img.src = new URL(ad.image.replace(/^\\/+/, ''), document.baseURI).href;
+          img.alt = ad.title;
+          img.loading = 'lazy';
+          img.onerror = () => img.remove();
+          card.appendChild(img);
+        }
+        const label = document.createElement('span');
+        label.textContent = 'PARTENAIRE • CONTENU COMMERCIAL';
+        const title = document.createElement('strong');
+        title.textContent = ad.title;
+        const description = document.createElement('small');
+        description.textContent = ad.summary || 'Découvrez ce partenaire d’Écho du Nord TV.';
+        card.append(label, title, description);
+        container.appendChild(card);
+      });
+    } catch (error) { console.warn('Publicités CMS non chargées :', error); }
+  }
+
   async function loadUrgentAlert() {
     try {
       const response = await fetch('https://api.github.com/repos/zavierlevisionnaire/echo-du-nord-tv/contents/content/urgent.json?ref=main', {cache:'no-store', headers:{Accept:'application/vnd.github+json'}});
@@ -238,4 +281,5 @@
 
   loadCmsArticles();
   loadUrgentAlert();
+  loadCmsAds();
 })();
