@@ -21,7 +21,7 @@
   if (year) year.textContent = new Date().getFullYear();
 
   // Renseigner ici les véritables adresses officielles du média.
-  const socialLinks = { facebook: '', youtube: '', whatsapp: '' };
+  const socialLinks = { facebook: '', youtube: '', whatsapp: 'https://wa.me/24174619127' };
   document.querySelectorAll('[data-social]').forEach(link => {
     const url = socialLinks[link.dataset.social];
     if (url) {
@@ -70,7 +70,7 @@
         };
       }));
 
-      const validArticles = articles.filter(Boolean).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const validArticles = articles.filter(article => article && article.title.toLowerCase() !== 'test site' && article.title.toLowerCase() !== 'mvl' && article.summary.length >= 35).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
       if (!validArticles.length) return;
       grid.replaceChildren();
 
@@ -82,7 +82,7 @@
 
         if (article.image) {
           const img = document.createElement('img');
-          img.src = article.image;
+          img.src = article.image.replace(/^\\/+/, '');
           img.alt = article.title;
           img.loading = 'lazy';
           img.style.width = '100%';
