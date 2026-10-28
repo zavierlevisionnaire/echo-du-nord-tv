@@ -42,3 +42,10 @@ content:
       - name: body
         label: Contenu de l'article
         type: rich-text
+
+  - name: urgent
+    label: Alerte urgente (JSON)
+    type: file
+    path: content/urgent.json
+    format: code
+    fields: []
