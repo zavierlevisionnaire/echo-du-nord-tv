@@ -6,9 +6,9 @@
   const node = (tag, cls, text) => { const el=document.createElement(tag); if(cls)el.className=cls; if(text!==undefined)el.textContent=text; return el; };
   async function articles(){
     const grid=document.getElementById('news-grid'); if(!grid)return;
-    const {data,error}=await client.from('echo_articles').select('id,title,category,excerpt,body,cover_image,published_at,created_at').eq('status','published').order('published_at',{ascending:false}).limit(30);
+    const {data,error}=await client.from('echo_articles').select('id,title,category,excerpt,body,cover_image,published_at,created_at').eq('status','published').order('published_at',{ascending:false}).limit(6);
     if(error){console.warn('Articles Écho Supabase:',error.message);return;}
-    if(!data || !data.length)return; // Preserve existing sample cards until the first real publication.
+    if(!data || !data.length)return; // Preserve legacy sample cards only until the first real publication.
     grid.replaceChildren();
     const categories=new Set();
     data.forEach((a,i)=>{
@@ -20,7 +20,7 @@
       picture.appendChild(node('span','image-caption','ÉCHO DU NORD TV'));
       const body=node('div','news-body');body.appendChild(node('div','meta',[a.category,dateLabel(a.published_at||a.created_at)].filter(Boolean).join(' • ')));
       body.appendChild(node('h3','',a.title));if(a.excerpt)body.appendChild(node('p','',a.excerpt));
-      const details=node('details','article-details');details.appendChild(node('summary','',"Lire l’article"));details.appendChild(node('p','',a.body||a.excerpt||''));body.appendChild(details);
+      const read=node('a','article-read',"Lire l’article →");read.href='article.html?id='+encodeURIComponent(a.id);read.style.cssText='display:inline-block;margin-top:10px;color:#087b38;font-size:12px;font-weight:800;text-decoration:none';body.appendChild(read);
       card.append(picture,body);grid.appendChild(card);
     });
     const filters=document.getElementById('category-filters');
