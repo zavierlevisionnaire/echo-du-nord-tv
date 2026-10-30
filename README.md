@@ -2,33 +2,41 @@
 
 **L’information qui résonne au-delà des frontières.**
 
-Site public : https://zavierlevisionnaire.github.io/echo-du-nord-tv/
+- Site public : https://zavierlevisionnaire.github.io/echo-du-nord-tv/
+- Administration : https://zavierlevisionnaire.github.io/echo-du-nord-tv/admin/
 
 ## Administration éditoriale
 
-L’administration est gérée avec [Pages CMS](https://app.pagescms.org/), connecté au dépôt GitHub `zavierlevisionnaire/echo-du-nord-tv`.
+Le site dispose désormais d'un tableau de bord privé connecté à Supabase.
 
-- **Articles** : créer et modifier les publications.
-- **Médias** : déposer les photos dans le dossier `media/`.
-- **Page d’accueil (HTML)** : modifier la structure du site uniquement si nécessaire.
+- Connexion sécurisée par e-mail et mot de passe.
+- Création, modification, publication et suppression d'articles.
+- Import direct des photos de couverture depuis un téléphone ou un ordinateur.
+- Gestion des publicités et des partenaires.
+- Activation et désactivation du bandeau d'information urgente.
+- Les articles non publiés restent privés ; seuls les articles publiés sont visibles publiquement.
 
-Pour publier un article :
-1. Ouvrir Pages CMS et sélectionner le dépôt `echo-du-nord-tv`.
-2. Ouvrir **Articles**, puis **Ajouter une entrée**.
-3. Renseigner le titre, la date, la catégorie, la photo de couverture et le résumé.
-4. Rédiger le contenu, puis enregistrer.
-5. Attendre la mise à jour du site GitHub Pages et actualiser la page.
+L'administrateur autorisé est le compte zavierlevisionnaire@gmail.com. Il faut utiliser le mot de passe déjà défini pour ce compte Supabase. Aucun mot de passe n'est stocké dans le dépôt GitHub.
 
-Les articles sont enregistrés dans `content/articles/` au format Markdown avec métadonnées YAML. La page d’accueil les récupère depuis le dépôt public et les affiche automatiquement.
+## Architecture et sécurité
+
+Le CMS utilise le projet Supabase déjà configuré pour l'écosystème des sites, avec des tables dédiées préfixées echo_ et un bucket d'images echo-media. Les contenus Destination Gabon restent dans leurs propres tables et leur propre espace de stockage.
+
+Les règles Row Level Security (RLS) limitent l'écriture aux administrateurs Écho du Nord TV. Les visiteurs peuvent uniquement lire les articles publiés, les publicités actives et l'alerte publique. La clé publishable présente dans le navigateur n'est pas une clé secrète ; aucune clé service_role n'est exposée.
+
+Pages CMS reste disponible comme outil secondaire pour les anciens contenus Markdown du dépôt, mais le tableau de bord /admin/ devient l'interface recommandée pour les nouvelles publications.
 
 ## Fichiers principaux
 
-- `index.html` : structure de la page d’accueil.
-- `styles.css` : identité graphique et adaptation mobile.
-- `script.js` : navigation, réseaux sociaux et affichage des articles.
-- `.pages.yml` : configuration de Pages CMS.
-- `media/` : photos et visuels.
-- `content/articles/` : articles de la rédaction.
+- index.html : page d'accueil publique.
+- styles.css : identité graphique et adaptation mobile.
+- script.js : navigation et compatibilité avec les contenus historiques.
+- echo-public.js : affichage des articles, publicités et alertes Supabase.
+- admin/index.html : interface d'administration.
+- admin.js : gestion des contenus et des médias.
+- supabase-config.js : configuration publique du client Supabase.
+- .pages.yml : configuration Pages CMS historique.
+- media/ : anciens médias du site.
 
 ## Coordonnées officielles
 
@@ -40,4 +48,4 @@ Le lien YouTube et le lecteur vidéo en direct seront activés dès que la chaî
 
 ## Hébergement
 
-Le site est un site statique hébergé avec GitHub Pages. Les modifications enregistrées sur la branche `main` sont publiées par le mécanisme GitHub Pages configuré pour ce dépôt. Pages CMS modifie les fichiers du dépôt ; il ne fournit pas à lui seul un serveur vidéo ni une base de données.
+Le site est hébergé avec GitHub Pages. Les fichiers du site sont publiés depuis la branche main. Les contenus créés depuis le nouveau tableau de bord sont enregistrés directement dans Supabase et apparaissent sur le site public après actualisation.
