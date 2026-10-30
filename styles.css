@@ -7,3 +7,6 @@
 .ad-slot.ad-live{position:relative;overflow:hidden;text-decoration:none;cursor:pointer;background:#f7fbf8;transition:transform .2s,border-color .2s}.ad-slot.ad-live:hover{transform:translateY(-3px);border-color:var(--green)}.ad-slot.ad-live img{width:100%;max-height:105px;object-fit:contain;margin-bottom:10px}.ad-slot.ad-live strong{color:var(--deep)}.ad-slot.ad-live span{color:var(--green)}
 
 .news-empty{grid-column:1/-1;border:1px dashed #b8cbbd;border-radius:13px;background:#f7fbf8;padding:34px;text-align:center}.news-empty strong{display:block;color:var(--deep);font-size:17px;margin-bottom:8px}.news-empty p{margin:0;color:#77847b;font-size:12px;line-height:1.8}
+
+/* Respect the hidden state for CMS-controlled components. */
+[hidden]{display:none!important}
