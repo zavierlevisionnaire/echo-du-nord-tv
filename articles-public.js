@@ -1,0 +1,15 @@
+(() => {
+  const grid=document.getElementById('archive-grid'), search=document.getElementById('archive-search'), category=document.getElementById('archive-category'), count=document.getElementById('archive-count');
+  if(!grid||!window.supabase||!window.ECHO_SUPABASE_URL||!window.ECHO_SUPABASE_ANON_KEY){if(grid)grid.textContent='Le service des actualités est momentanément indisponible.';return;}
+  const db=window.supabase.createClient(window.ECHO_SUPABASE_URL,window.ECHO_SUPABASE_ANON_KEY);
+  const fmt=v=>v?new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(v)):'';
+  let all=[];
+  const render=()=>{const term=(search.value||'').trim().toLocaleLowerCase('fr'),rub=category.value;const rows=all.filter(a=>(!rub||a.category===rub)&&(!term||[a.title,a.excerpt,a.body,a.category].join(' ').toLocaleLowerCase('fr').includes(term)));
+    count.textContent=rows.length+' article(s) affiché(s) sur '+all.length+' publication(s).';grid.replaceChildren();
+    if(!rows.length){const e=document.createElement('div');e.className='archive-state';e.textContent=all.length?'Aucun article ne correspond à votre recherche.':'Aucun article publié pour le moment.';grid.append(e);return;}
+    rows.forEach(a=>{const card=document.createElement('article');card.className='archive-card';if(a.cover_image){const img=document.createElement('img');img.src=a.cover_image;img.alt=a.title;img.loading='lazy';img.onerror=()=>img.remove();card.append(img);}else{const ph=document.createElement('div');ph.className='archive-no-image';ph.textContent='ÉCHO DU NORD TV';card.append(ph);}
+      const content=document.createElement('div');content.className='archive-card-content';const meta=document.createElement('div');meta.className='archive-meta';meta.textContent=(a.category||'Actualité')+' · '+fmt(a.published_at||a.created_at);const title=document.createElement('h2');title.textContent=a.title;const excerpt=document.createElement('p');excerpt.textContent=a.excerpt||((a.body||'').slice(0,170));const link=document.createElement('a');link.className='archive-read';link.href='article.html?id='+encodeURIComponent(a.id);link.textContent='Lire l’article →';content.append(meta,title,excerpt,link);card.append(content);grid.append(card);});
+  };
+  async function load(){const {data,error}=await db.from('echo_articles').select('id,title,category,excerpt,body,cover_image,published_at,created_at').eq('status','published').order('published_at',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false});if(error){grid.textContent='Impossible de charger les articles. Veuillez réessayer plus tard.';count.textContent='Erreur de chargement';console.error(error);return;}all=data||[];const cats=[...new Set(all.map(a=>a.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;category.append(o);});render();}
+  search.addEventListener('input',render);category.addEventListener('change',render);load();
+})();
