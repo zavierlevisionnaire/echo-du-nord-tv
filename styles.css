@@ -10,3 +10,34 @@
 
 /* Respect the hidden state for CMS-controlled components. */
 [hidden]{display:none!important}
+
+
+/* Motion design Écho du Nord TV — animations légères, sans vidéo externe */
+.animated-logo{animation:logoBreath 4s ease-in-out infinite;position:relative;z-index:1}
+.broadcast-rings{position:absolute;inset:50% auto auto 50%;width:190px;height:190px;transform:translate(-50%,-50%);pointer-events:none}
+.broadcast-rings span{position:absolute;inset:0;border:1px solid #67e69555;border-radius:50%;animation:broadcastPulse 3.6s ease-out infinite}
+.broadcast-rings span:nth-child(2){animation-delay:1.2s}.broadcast-rings span:nth-child(3){animation-delay:2.4s}
+.signal-wave{height:25px;display:flex;align-items:center;gap:4px;margin-top:15px;position:relative;z-index:1}
+.signal-wave i,.motion-equalizer i{display:block;width:4px;height:8px;border-radius:5px;background:#74e99a;animation:waveBars .9s ease-in-out infinite alternate}
+.signal-wave i:nth-child(3n),.motion-equalizer i:nth-child(3n){animation-delay:-.5s}.signal-wave i:nth-child(2n),.motion-equalizer i:nth-child(2n){animation-delay:-.25s}
+.motion-frame{background:radial-gradient(ellipse at 50% 48%,#0c8740 0%,#064525 38%,#02170d 78%);isolation:isolate}
+.motion-grid{position:absolute;inset:-40%;opacity:.17;background-image:linear-gradient(#9df4b4 1px,transparent 1px),linear-gradient(90deg,#9df4b4 1px,transparent 1px);background-size:34px 34px;transform:perspective(250px) rotateX(58deg);animation:gridDrift 12s linear infinite}
+.motion-orbit{position:absolute;border:1px solid #9af2b45c;border-radius:50%;width:260px;height:260px;animation:orbitSpin 16s linear infinite}
+.motion-orbit:after{content:"";position:absolute;width:9px;height:9px;top:22px;left:40px;background:#f5d51a;border-radius:50%;box-shadow:0 0 18px #f5d51a}
+.orbit-a{transform:rotateX(65deg) rotateZ(0deg)}.orbit-b{width:205px;height:205px;border-color:#fff5;animation-direction:reverse;animation-duration:12s}
+.motion-logo{position:relative;z-index:1;display:flex;align-items:center;gap:7px;font-size:clamp(25px,4vw,42px);font-weight:950;letter-spacing:-.06em;text-shadow:0 5px 22px #00190c}
+.motion-logo span{color:#fff}.motion-logo strong{color:#baf4ca}.motion-logo em{font-style:normal;background:#e51e2a;color:#fff;border-radius:4px;padding:2px 7px;font-size:.55em;letter-spacing:.02em}
+.motion-equalizer{position:absolute;bottom:66px;display:flex;align-items:center;gap:5px;height:28px}
+.motion-equalizer i{width:5px;height:10px;animation-duration:.65s}
+.motion-live{position:absolute;top:17px;left:17px;display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #ffffff35;border-radius:30px;background:#00190c88;color:#d5f6df;font-size:8px;font-weight:900;letter-spacing:.13em}
+.motion-live i{width:7px;height:7px;border-radius:50%;background:#f32635;box-shadow:0 0 0 4px #f3263528;animation:liveBlink 1.5s infinite}
+.motion-frame .video-caption{z-index:1}
+.video-placeholder.motion-studio{background:#ffffff0b}
+.hero-visual,.screen-card,.video-frame,.live-player{will-change:transform}
+@keyframes logoBreath{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 #42d87900)}50%{transform:scale(1.035);filter:drop-shadow(0 0 13px #42d87955)}}
+@keyframes broadcastPulse{0%{transform:scale(.35);opacity:.8}100%{transform:scale(1.25);opacity:0}}
+@keyframes waveBars{from{height:5px;opacity:.55}to{height:24px;opacity:1}}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:0 68px}}
+@keyframes orbitSpin{from{rotate:0deg}to{rotate:360deg}}
+@keyframes liveBlink{0%,100%{opacity:1}50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.animated-logo,.broadcast-rings span,.signal-wave i,.motion-grid,.motion-orbit,.motion-equalizer i,.motion-live i{animation:none!important}}
