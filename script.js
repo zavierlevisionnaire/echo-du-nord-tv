@@ -244,7 +244,7 @@
         if (ad.url) { card.href = ad.url; card.target = '_blank'; card.rel = 'noopener noreferrer'; }
         if (ad.image) {
           const img = document.createElement('img');
-          img.src = new URL(ad.image.replace(/^\\/+/, ''), document.baseURI).href;
+          img.src = new URL(ad.image.replace(/^\/+/, ''), document.baseURI).href;
           img.alt = ad.title;
           img.loading = 'lazy';
           img.onerror = () => img.remove();
@@ -279,7 +279,11 @@
     } catch (error) { console.warn('Alerte urgente non chargée :', error); }
   }
 
-  loadCmsArticles();
-  loadUrgentAlert();
-  loadCmsAds();
+  // Les nouveaux contenus sont chargés par echo-public.js depuis Supabase.
+  // Les anciens fichiers Markdown restent un mode de secours si Supabase n'est pas configuré.
+  if (!window.ECHO_SUPABASE_URL || !window.ECHO_SUPABASE_ANON_KEY || !window.supabase) {
+    loadCmsArticles();
+    loadUrgentAlert();
+    loadCmsAds();
+  }
 })();
