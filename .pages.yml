@@ -44,11 +44,24 @@ content:
         type: rich-text
 
   - name: urgent
-    label: Alerte urgente (JSON)
+    label: Alerte urgente
     type: file
     path: content/urgent.json
-    format: code
-    fields: []
+    format: json
+    fields:
+      - name: active
+        label: Afficher la bande d'urgence
+        type: boolean
+        default: false
+        description: Activez uniquement lorsqu'une information urgente vérifiée doit être diffusée.
+      - name: message
+        label: Message urgent
+        type: text
+        description: Texte court et factuel à afficher sur le site.
+      - name: url
+        label: Lien complémentaire
+        type: string
+        description: Facultatif. Adresse d'un article ou d'une source officielle.
 
   - name: advertisements
     label: Publicités & partenaires
