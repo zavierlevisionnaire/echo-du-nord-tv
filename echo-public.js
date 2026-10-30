@@ -15,7 +15,7 @@
       categories.add(a.category);
       const card=node('article','news-card'+(i===0?' featured':''));
       const picture=node('div','news-image image-green');
-      if(a.cover_image){const img=node('img);img.src=a.cover_image;img.alt=a.title;img.loading='lazy';img.onerror=()=>img.remove();picture.appendChild(img);}
+      if(a.cover_image){const img=node('img');img.src=a.cover_image;img.alt=a.title;img.loading='lazy';img.onerror=()=>img.remove();picture.appendChild(img);}
       const tag=node('span','category',String(a.category||'Actualité').toUpperCase());picture.appendChild(tag);
       picture.appendChild(node('span','image-caption','ÉCHO DU NORD TV'));
       const body=node('div','news-body');body.appendChild(node('div','meta',[a.category,dateLabel(a.published_at||a.created_at)].filter(Boolean).join(' • ')));
