@@ -14,13 +14,57 @@
   async function enter(user){
     await checkAdmin(user);currentUser=user;$('auth-screen').style.display='none';$('app').style.display='block';$('user-email').textContent=user.email||'Administrateur';await refreshAll();show('dashboard');
   }
-  $('login-form').addEventListener('submit',async e=>{
-    e.preventDefault();const btn=e.submitter;btn.disabled=true;btn.textContent='Connexion…';$('login-error').classList.remove('show');
-    const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
-    try{if(error)throw error;await enter(data.user);}catch(err){$('login-error').textContent=err.message||'Connexion impossible. Vérifiez vos identifiants.';$('login-error').classList.add('show');if(data?.user)await db.auth.signOut();}
-    btn.disabled=false;btn.textContent='Se connecter';
+  // Accès pratique : mémoriser uniquement l'adresse e-mail, jamais le mot de passe.
+  try {
+    const savedEmail=localStorage.getItem('echo_admin_email');
+    if(savedEmail){$('email').value=savedEmail;$('remember-email').checked=true;}
+  } catch (_) {}
+  $('remember-email').addEventListener('change',()=>{
+    try {
+      if($('remember-email').checked)localStorage.setItem('echo_admin_email',$('email').value.trim());
+      else localStorage.removeItem('echo_admin_email');
+    } catch (_) {}
   });
-  $('logout').onclick=async()=>{await db.auth.signOut();location.reload();};
+  $('email').addEventListener('change',()=>{
+    try {if($('remember-email').checked)localStorage.setItem('echo_admin_email',$('email').value.trim());} catch (_) {}
+  });
+  $('toggle-password').addEventListener('click',()=>{
+    const field=$('password'),visible=field.type==='password';
+    field.type=visible?'text':'password';
+    $('toggle-password').textContent=visible?'Masquer':'Afficher';
+    $('toggle-password').setAttribute('aria-pressed',String(visible));
+  });
+  let idleTimer=null;
+  function resetIdleTimer(){
+    if(!currentUser)return;
+    clearTimeout(idleTimer);
+    idleTimer=setTimeout(async()=>{
+      await db.auth.signOut();
+      $('login-error').textContent='Session fermée automatiquement après 30 minutes sans activité. Reconnectez-vous.';
+      $('login-error').classList.add('show');
+    },30*60*1000);
+  }
+  ['pointerdown','keydown','touchstart','scroll'].forEach(evt=>window.addEventListener(evt,resetIdleTimer,{passive:true}));
+  $('login-form').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=$('login-submit');btn.disabled=true;btn.textContent='Connexion…';$('login-error').classList.remove('show');
+    try{
+      const email=$('email').value.trim(),password=$('password').value;
+      if($('remember-email').checked){try{localStorage.setItem('echo_admin_email',email);}catch(_){}}
+      else{try{localStorage.removeItem('echo_admin_email');}catch(_){}}
+      const {data,error}=await db.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      await enter(data.user);
+      $('password').value='';
+      resetIdleTimer();
+    }catch(err){
+      $('login-error').textContent='Connexion impossible : '+(err.message||'Vérifiez vos identifiants et votre connexion.');
+      $('login-error').classList.add('show');
+      $('password').value='';
+      try{await db.auth.signOut();}catch(_){}
+    }finally{btn.disabled=false;btn.textContent='Se connecter';}
+  });
+  $('logout').onclick=async()=>{clearTimeout(idleTimer);await db.auth.signOut();location.reload();};
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
   document.querySelectorAll('[data-open-editor]').forEach(b=>b.addEventListener('click',()=>{resetArticle();show('editor');}));
   async function refreshAll(){await Promise.all([loadArticles(),loadAds(),loadUrgent()]);loadVisitorStats();}
@@ -106,7 +150,15 @@
   const origShow=show;show=function(view){origShow(view);if(view==='visitors')loadVisitorStats();if(['invoices','revenue','expenses','reports'].includes(view)){refreshFinance().then(()=>{if(view==='reports')refreshReport();}).catch(e=>notify('invoice-toast','Erreur de chargement : '+e.message));}else if(view==='reports')refreshReport();};
   const oldRefresh=refreshAll;refreshAll=async()=>{await oldRefresh();await refreshFinance();setDateDefaults();};
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.view==='reports')refreshReport();}));
-  db.auth.getSession().then(async({data})=>{if(data.session){try{await enter(data.session.user);}catch(e){await db.auth.signOut();}}});
+  db.auth.getSession().then(async({data,error})=>{
+    if(error||!data.session)return;
+    try{
+      const {data:verified,error:verifyError}=await db.auth.getUser();
+      if(verifyError||!verified.user)throw verifyError||new Error('Session invalide.');
+      await enter(verified.user);
+      resetIdleTimer();
+    }catch(e){await db.auth.signOut();}
+  });
 
   db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;$('app').style.display='none';$('auth-screen').style.display='grid';}});
 })();
