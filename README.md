@@ -1,4 +1,4 @@
-# Écho du Nord TV
+# ÉCHO 9 TV
 
 **L’information qui résonne au-delà des frontières.**
 
@@ -22,7 +22,7 @@ L'administrateur autorisé est le compte zavierlevisionnaire@gmail.com. Il faut 
 
 Le CMS utilise le projet Supabase déjà configuré pour l'écosystème des sites, avec des tables dédiées préfixées echo_ et un bucket d'images echo-media. Les contenus Destination Gabon restent dans leurs propres tables et leur propre espace de stockage.
 
-Les règles Row Level Security (RLS) limitent l'écriture aux administrateurs Écho du Nord TV. Les visiteurs peuvent uniquement lire les articles publiés, les publicités actives et l'alerte publique. La clé publishable présente dans le navigateur n'est pas une clé secrète ; aucune clé service_role n'est exposée.
+Les règles Row Level Security (RLS) limitent l'écriture aux administrateurs ÉCHO 9 TV. Les visiteurs peuvent uniquement lire les articles publiés, les publicités actives et l'alerte publique. La clé publishable présente dans le navigateur n'est pas une clé secrète ; aucune clé service_role n'est exposée.
 
 Pages CMS reste disponible comme outil secondaire pour les anciens contenus Markdown du dépôt, mais le tableau de bord /admin/ devient l'interface recommandée pour les nouvelles publications.
 
