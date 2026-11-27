@@ -161,5 +161,51 @@
   });
 
   db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;$('app').style.display='none';$('auth-screen').style.display='grid';}});
-})();
+
+  // VISUAL DESIGNER ÉCHO 9 — modèle carré modifiable
+  (() => {
+    const ids=['visual-photo','visual-logo','visual-badge','visual-title','visual-brand','visual-slogan','visual-phone','visual-social','visual-email'];
+    if(!$('visual-canvas'))return;
+    const canvas=$('visual-canvas'),ctx=canvas.getContext('2d');
+    let photo=null,customLogo=null,defaultLogo=new Image();
+    defaultLogo.src='../logo-echo-9.svg';
+    const value=id=>$(id).value.trim();
+    function loadFile(file,cb){if(!file)return;const url=URL.createObjectURL(file),im=new Image();im.onload=()=>{cb(im);URL.revokeObjectURL(url);};im.onerror=()=>{URL.revokeObjectURL(url);$('visual-status').textContent='Impossible de lire cette image.';};im.src=url;}
+    function drawCover(im){
+      if(!im)return;
+      const scale=Math.max(1080/im.width,957/im.height),w=im.width*scale,h=im.height*scale;
+      ctx.drawImage(im,(1080-w)/2,(957-h)/2,w,h);
+    }
+    function wrap(text,maxWidth,font){
+      ctx.font=font;const words=String(text||'').split(/\s+/),lines=[];let line='';
+      words.forEach(word=>{const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;});
+      if(line)lines.push(line);return lines;
+    }
+    function draw(){
+      ctx.clearRect(0,0,1080,1080);ctx.fillStyle='#65716b';ctx.fillRect(0,0,1080,1080);
+      if(photo)drawCover(photo);
+      const shade=ctx.createLinearGradient(0,0,0,960);shade.addColorStop(0,'rgba(0,0,0,.08)');shade.addColorStop(.42,'rgba(0,0,0,.14)');shade.addColorStop(.72,'rgba(0,35,12,.78)');shade.addColorStop(1,'rgba(0,48,14,.94)');ctx.fillStyle=shade;ctx.fillRect(0,0,1080,957);
+      const logo=customLogo||defaultLogo;
+      if(logo.complete&&logo.naturalWidth){const ratio=Math.min(112/logo.width,112/logo.height);ctx.drawImage(logo,948,16,logo.width*ratio,logo.height*ratio);}
+      const badge=value('visual-badge')||'● Alerte Infos';ctx.font='bold 48px Arial';const bw=Math.min(600,ctx.measureText(badge).width+36);ctx.fillStyle='#d52212';ctx.fillRect((1080-bw)/2,646,bw,60);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 48px Arial';ctx.fillText(badge,540,676,{maxWidth:bw-20});
+      let fs=55,lines;do{lines=wrap(value('visual-title').toUpperCase(),1010,'900 '+fs+'px Arial');if(lines.length<=3)break;fs-=3;}while(fs>38);
+      ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='900 '+fs+'px Arial';const lineH=fs*1.04;let y=808+(3-lines.length)*lineH/2;
+      lines.slice(0,3).forEach(line=>{ctx.fillText(line,540,y,1030);y+=lineH;});
+      ctx.fillStyle='#fff';ctx.fillRect(0,957,1080,123);
+      ctx.fillStyle='#064b16';ctx.textAlign='center';ctx.font='900 64px Arial';ctx.fillText(value('visual-brand').toUpperCase(),540,1017,1000);
+      ctx.fillStyle='#087b38';ctx.font='bold 19px Arial';ctx.fillText(value('visual-slogan').toUpperCase(),540,1040,1000);
+      ctx.fillStyle='#d52212';ctx.beginPath();ctx.roundRect(64,1042,952,38,28);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textBaseline='middle';ctx.font='bold 21px Arial';ctx.textAlign='left';ctx.fillText('◉ '+value('visual-phone'),82,1062,260);
+      ctx.textAlign='center';ctx.fillText('♪ '+value('visual-social'),540,1062,280);
+      ctx.textAlign='right';ctx.fillText('✉ '+value('visual-email'),998,1062,300);
+    }
+    ids.forEach(id=>$(id).addEventListener('input',draw));
+    $('visual-photo').addEventListener('change',e=>loadFile(e.target.files[0],im=>{photo=im;draw();}));
+    $('visual-logo').addEventListener('change',e=>loadFile(e.target.files[0],im=>{customLogo=im;draw();}));
+    defaultLogo.onload=draw;defaultLogo.onerror=draw;
+    $('visual-download').onclick=()=>{draw();canvas.toBlob(blob=>{if(!blob){$('visual-status').textContent='Export impossible. Réessayez.';return;}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='echo9-visuel-'+Date.now()+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);$('visual-status').textContent='Visuel PNG prêt à être utilisé dans un article.';},'image/png');};
+    $('visual-use-cover').onclick=()=>{draw();canvas.toBlob(blob=>{if(!blob)return;const file=new File([blob],'visuel-echo9.png',{type:'image/png'});const transfer=new DataTransfer();transfer.items.add(file);$('cover-file').files=transfer.files;$('cover-preview').innerHTML='<img alt="Visuel ÉCHO 9" src="'+URL.createObjectURL(blob)+'">';$('upload-status').textContent='Visuel créé dans Conception visuelle · prêt à enregistrer avec l’article';show('editor');$('visual-status').textContent='Visuel ajouté comme couverture. Complétez votre article puis enregistrez-le.';},'image/png');};
+    draw();
+  })();
+\n})();
 
