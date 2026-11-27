@@ -1,4 +1,4 @@
-// Chargement public des contenus éditoriaux Écho du Nord TV depuis Supabase.
+// Chargement public des contenus éditoriaux ÉCHO 9 TV depuis Supabase.
 (() => {
   if (!window.supabase || !window.ECHO_SUPABASE_URL || !window.ECHO_SUPABASE_ANON_KEY) return;
   const client = window.supabase.createClient(window.ECHO_SUPABASE_URL, window.ECHO_SUPABASE_ANON_KEY);
@@ -17,7 +17,7 @@
       const picture=node('div','news-image image-green');
       if(a.cover_image){const img=node('img');img.src=a.cover_image;img.alt=a.title;img.loading='lazy';img.onerror=()=>img.remove();picture.appendChild(img);}
       const tag=node('span','category',String(a.category||'Actualité').toUpperCase());picture.appendChild(tag);
-      picture.appendChild(node('span','image-caption','ÉCHO DU NORD TV'));
+      picture.appendChild(node('span','image-caption','ÉCHO 9 TV'));
       const body=node('div','news-body');body.appendChild(node('div','meta',[a.category,dateLabel(a.published_at||a.created_at)].filter(Boolean).join(' • ')));
       body.appendChild(node('h3','',a.title));if(a.excerpt)body.appendChild(node('p','',a.excerpt));
       const read=node('a','article-read',"Lire l’article →");read.href='article.html?id='+encodeURIComponent(a.id);read.style.cssText='display:inline-block;margin-top:10px;color:#087b38;font-size:12px;font-weight:800;text-decoration:none';body.appendChild(read);
@@ -44,7 +44,7 @@
     if(error||!data?.length)return;container.replaceChildren();
     data.forEach(ad=>{const card=node(ad.target_url?'a':'div','ad-slot ad-live');if(ad.target_url){card.href=ad.target_url;card.target='_blank';card.rel='noopener noreferrer';}
       if(ad.image_url){const img=node('img');img.src=ad.image_url;img.alt=ad.title;img.loading='lazy';img.onerror=()=>img.remove();card.appendChild(img);}
-      card.append(node('span','',({accueil:'BANNIÈRE PARTENAIRE',article:'PUBLICITÉ • PUBLIREPORTAGE',partenaire:'PARTENAIRE ÉCHO DU NORD'})[ad.position]||'PARTENAIRE • CONTENU COMMERCIAL'),node('strong','',ad.title),node('small','',ad.description||'Découvrez ce partenaire d’Écho du Nord TV.'));container.appendChild(card);
+      card.append(node('span','',({accueil:'BANNIÈRE PARTENAIRE',article:'PUBLICITÉ • PUBLIREPORTAGE',partenaire:'PARTENAIRE ÉCHO 9 TV'})[ad.position]||'PARTENAIRE • CONTENU COMMERCIAL'),node('strong','',ad.title),node('small','',ad.description||'Découvrez ce partenaire d’ÉCHO 9 TV.'));container.appendChild(card);
     });
   }
   articles();urgent();ads();
