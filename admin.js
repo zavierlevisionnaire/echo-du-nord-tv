@@ -6,13 +6,21 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const slugify=s=>String(s||'article').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'article';
   const notify=(id,msg)=>{const el=$(id);el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);};
-  function show(view){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('crumb').textContent=({dashboard:'Tableau de bord',articles:'Articles',editor:'Rédaction',ads:'Publicités',urgent:'Alerte urgente',visitors:'Visiteurs',invoices:'Facturation',revenue:'Chiffre d’affaires',expenses:'Dépenses',reports:'Rapports financiers'})[view]||view;}
+  function show(view){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('crumb').textContent=({dashboard:'Tableau de bord',articles:'Articles',editor:'Rédaction',visual:'Conception visuelle',ads:'Publicités',urgent:'Alerte urgente',visitors:'Visiteurs',invoices:'Facturation',revenue:'Chiffre d’affaires',expenses:'Dépenses',reports:'Rapports financiers'})[view]||view;}
   async function checkAdmin(user){
     const {data,error}=await db.from('echo_admins').select('user_id,email').eq('user_id',user.id).maybeSingle();
     if(error||!data)throw new Error('Ce compte est connecté, mais il ne dispose pas des droits administrateur ÉCHO 9.');
   }
   async function enter(user){
-    await checkAdmin(user);currentUser=user;$('auth-screen').style.display='none';$('app').style.display='block';$('user-email').textContent=user.email||'Administrateur';await refreshAll();show('dashboard');
+    // Ouvrir l’administration immédiatement après validation des droits.
+    // Le chargement des données ne doit jamais bloquer l’accès à l’interface.
+    await Promise.race([checkAdmin(user),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Le serveur met trop de temps à répondre. Réessayez dans quelques secondes.')),12000))]);
+    currentUser=user;$('auth-screen').style.display='none';$('app').style.display='block';$('user-email').textContent=user.email||'Administrateur';show('dashboard');
+    refreshAll().catch(err=>{
+      const target=$('recent-articles');
+      if(target)target.innerHTML='<tr><td colspan="4" class="empty">Administration ouverte. Chargement des données impossible : '+esc(err.message||'erreur serveur')+'</td></tr>';
+      console.error('ÉCHO 9 — chargement du tableau de bord :',err);
+    });
   }
   // Accès pratique : mémoriser uniquement l'adresse e-mail, jamais le mot de passe.
   try {
