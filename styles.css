@@ -12,7 +12,7 @@
 [hidden]{display:none!important}
 
 
-/* Motion design Écho du Nord TV — animations légères, sans vidéo externe */
+/* Motion design ÉCHO 9 TV — animations légères, sans vidéo externe */
 .animated-logo{animation:logoBreath 4s ease-in-out infinite;position:relative;z-index:1}
 .broadcast-rings{position:absolute;inset:50% auto auto 50%;width:190px;height:190px;transform:translate(-50%,-50%);pointer-events:none}
 .broadcast-rings span{position:absolute;inset:0;border:1px solid #67e69555;border-radius:50%;animation:broadcastPulse 3.6s ease-out infinite}
