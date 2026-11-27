@@ -207,5 +207,5 @@
     $('visual-use-cover').onclick=()=>{draw();canvas.toBlob(blob=>{if(!blob)return;const file=new File([blob],'visuel-echo9.png',{type:'image/png'});const transfer=new DataTransfer();transfer.items.add(file);$('cover-file').files=transfer.files;$('cover-preview').innerHTML='<img alt="Visuel ÉCHO 9" src="'+URL.createObjectURL(blob)+'">';$('upload-status').textContent='Visuel créé dans Conception visuelle · prêt à enregistrer avec l’article';show('editor');$('visual-status').textContent='Visuel ajouté comme couverture. Complétez votre article puis enregistrez-le.';},'image/png');};
     draw();
   })();
-\n})();
+})();
 
