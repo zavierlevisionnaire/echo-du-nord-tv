@@ -68,7 +68,7 @@
       active: fields.active || 'false',
       position: fields.position || 'accueil',
       url: fields.url || '',
-      summary: fields.excerpt || fields.extrait || fields.resume || plainBody.slice(0, 220) || 'Retrouvez cette actualité sur Écho du Nord TV.',
+      summary: fields.excerpt || fields.extrait || fields.resume || plainBody.slice(0, 220) || 'Retrouvez cette actualité sur ÉCHO 9 TV.',
       body: plainBody
     };
   }
@@ -144,7 +144,7 @@
 
         const caption = document.createElement('span');
         caption.className = 'image-caption';
-        caption.textContent = 'ÉCHO DU NORD TV';
+        caption.textContent = 'ÉCHO 9 TV';
         picture.appendChild(caption);
 
         const body = document.createElement('div');
@@ -212,7 +212,7 @@
       const note = document.querySelector('.demo-note');
       if (note) note.hidden = true;
     } catch (error) {
-      console.error('Écho du Nord TV — chargement des articles :', error);
+      console.error('ÉCHO 9 TV — chargement des articles :', error);
       const note = document.querySelector('.demo-note');
       if (note) {
         note.hidden = false;
@@ -251,11 +251,11 @@
           card.appendChild(img);
         }
         const label = document.createElement('span');
-        label.textContent = ({accueil:'BANNIÈRE PARTENAIRE',article:'PUBLICITÉ • PUBLIREPORTAGE',partenaire:'PARTENAIRE ÉCHO DU NORD'})[ad.position] || 'PARTENAIRE • CONTENU COMMERCIAL';
+        label.textContent = ({accueil:'BANNIÈRE PARTENAIRE',article:'PUBLICITÉ • PUBLIREPORTAGE',partenaire:'PARTENAIRE ÉCHO 9 TV'})[ad.position] || 'PARTENAIRE • CONTENU COMMERCIAL';
         const title = document.createElement('strong');
         title.textContent = ad.title;
         const description = document.createElement('small');
-        description.textContent = ad.summary || 'Découvrez ce partenaire d’Écho du Nord TV.';
+        description.textContent = ad.summary || 'Découvrez ce partenaire d’ÉCHO 9 TV.';
         card.append(label, title, description);
         container.appendChild(card);
       });
